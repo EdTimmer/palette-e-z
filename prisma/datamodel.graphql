@@ -3,6 +3,15 @@ type User {
   name: String!
   email: String! @unique
   password: String!
+  palettes: [Palette!]! @relation(name: "PaletteToUser", onDelete: CASCADE)
   updatedAt: DateTime!
   createdAt: DateTime!
+}
+
+type Palette {
+  id: ID! @unique
+  name: String!
+  description: String
+  colors: [String!]!
+  author: User! @relation(name: "PaletteToUser", onDelete: SET_NULL)
 }

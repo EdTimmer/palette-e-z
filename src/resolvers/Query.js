@@ -29,7 +29,34 @@ const Query = {
         id: userId
       }
     })
-  }   
+  },
+  
+  palettes(parent, args, { prisma, request }, info) {
+
+    const userId = getUserId(request);  // no false for second parameter because we want authentication
+    
+    const opArgs = {
+      where: {
+        author: {
+          id: userId
+        }
+      },
+      first: args.first,
+      skip: args.skip,
+      after: args.after,
+      orderBy: args.orderBy
+    };
+
+    if (args.query) {
+      opArgs.where.OR = [{
+        name_contains: args.query
+      }, {
+        description_contains: args.query
+      }];
+    }
+    
+    return prisma.query.palettes(opArgs, info);
+  },
 }
 
 export { Query as default };

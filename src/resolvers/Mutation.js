@@ -8,7 +8,7 @@ const Mutation = {
 
   async createUser(parent, args, { prisma }, info) {
 
-    const password = await hashPassword(args.data.password)
+    const password = await hashPassword(args.data.password);
 
     const user = await prisma.mutation.createUser({
       data: {
@@ -31,7 +31,7 @@ const Mutation = {
     });
 
     if (!user) {
-      throw new Error('Unable to login')
+      throw new Error('Unable to login');
     }
 
     const isMatch = await bcrypt.compare(args.data.password, user.password);
@@ -70,7 +70,27 @@ const Mutation = {
       data: args.data
     }, info);
 
-  }  
+  },
+
+  async createPalette(parent, args, { prisma, request }, info) {
+
+    const userId = getUserId(request);
+
+    return await prisma.mutation.createPalette({      
+      data: {
+        name: args.data.name,
+        description: args.data.description,
+        colors: { set: args.data.colors },
+
+        author: {
+          connect: {
+            id: userId
+          }
+        }
+      }
+    }, info);
+  },
+
 };
 
 export { Mutation as default };

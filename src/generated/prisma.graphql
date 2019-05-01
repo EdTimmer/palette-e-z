@@ -1,5 +1,9 @@
 # source: http://localhost:4466/palette/dev
-# timestamp: Tue Apr 30 2019 22:52:44 GMT-0400 (Eastern Daylight Time)
+# timestamp: Wed May 01 2019 09:50:06 GMT-0400 (Eastern Daylight Time)
+
+type AggregatePalette {
+  count: Int!
+}
 
 type AggregateUser {
   count: Int!
@@ -20,11 +24,17 @@ scalar Long
 
 type Mutation {
   createUser(data: UserCreateInput!): User!
+  createPalette(data: PaletteCreateInput!): Palette!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
+  updatePalette(data: PaletteUpdateInput!, where: PaletteWhereUniqueInput!): Palette
   deleteUser(where: UserWhereUniqueInput!): User
+  deletePalette(where: PaletteWhereUniqueInput!): Palette
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
+  upsertPalette(where: PaletteWhereUniqueInput!, create: PaletteCreateInput!, update: PaletteUpdateInput!): Palette!
   updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
+  updateManyPalettes(data: PaletteUpdateInput!, where: PaletteWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
+  deleteManyPalettes(where: PaletteWhereInput): BatchPayload!
 }
 
 enum MutationType {
@@ -54,10 +64,294 @@ type PageInfo {
   endCursor: String
 }
 
+type Palette implements Node {
+  id: ID!
+  name: String!
+  description: String
+  colors: [String!]!
+  author(where: UserWhereInput): User!
+}
+
+"""A connection to a list of items."""
+type PaletteConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [PaletteEdge]!
+  aggregate: AggregatePalette!
+}
+
+input PaletteCreatecolorsInput {
+  set: [String!]
+}
+
+input PaletteCreateInput {
+  name: String!
+  description: String
+  colors: PaletteCreatecolorsInput
+  author: UserCreateOneWithoutPalettesInput!
+}
+
+input PaletteCreateManyWithoutAuthorInput {
+  create: [PaletteCreateWithoutAuthorInput!]
+  connect: [PaletteWhereUniqueInput!]
+}
+
+input PaletteCreateWithoutAuthorInput {
+  name: String!
+  description: String
+  colors: PaletteCreatecolorsInput
+}
+
+"""An edge in a connection."""
+type PaletteEdge {
+  """The item at the end of the edge."""
+  node: Palette!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum PaletteOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  description_ASC
+  description_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type PalettePreviousValues {
+  id: ID!
+  name: String!
+  description: String
+  colors: [String!]!
+}
+
+type PaletteSubscriptionPayload {
+  mutation: MutationType!
+  node: Palette
+  updatedFields: [String!]
+  previousValues: PalettePreviousValues
+}
+
+input PaletteSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [PaletteSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [PaletteSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [PaletteSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: PaletteWhereInput
+}
+
+input PaletteUpdatecolorsInput {
+  set: [String!]
+}
+
+input PaletteUpdateInput {
+  name: String
+  description: String
+  colors: PaletteUpdatecolorsInput
+  author: UserUpdateOneWithoutPalettesInput
+}
+
+input PaletteUpdateManyWithoutAuthorInput {
+  create: [PaletteCreateWithoutAuthorInput!]
+  connect: [PaletteWhereUniqueInput!]
+  disconnect: [PaletteWhereUniqueInput!]
+  delete: [PaletteWhereUniqueInput!]
+  update: [PaletteUpdateWithWhereUniqueWithoutAuthorInput!]
+  upsert: [PaletteUpsertWithWhereUniqueWithoutAuthorInput!]
+}
+
+input PaletteUpdateWithoutAuthorDataInput {
+  name: String
+  description: String
+  colors: PaletteUpdatecolorsInput
+}
+
+input PaletteUpdateWithWhereUniqueWithoutAuthorInput {
+  where: PaletteWhereUniqueInput!
+  data: PaletteUpdateWithoutAuthorDataInput!
+}
+
+input PaletteUpsertWithWhereUniqueWithoutAuthorInput {
+  where: PaletteWhereUniqueInput!
+  update: PaletteUpdateWithoutAuthorDataInput!
+  create: PaletteCreateWithoutAuthorInput!
+}
+
+input PaletteWhereInput {
+  """Logical AND on all given filters."""
+  AND: [PaletteWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [PaletteWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [PaletteWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  description: String
+
+  """All values that are not equal to given value."""
+  description_not: String
+
+  """All values that are contained in given list."""
+  description_in: [String!]
+
+  """All values that are not contained in given list."""
+  description_not_in: [String!]
+
+  """All values less than the given value."""
+  description_lt: String
+
+  """All values less than or equal the given value."""
+  description_lte: String
+
+  """All values greater than the given value."""
+  description_gt: String
+
+  """All values greater than or equal the given value."""
+  description_gte: String
+
+  """All values containing the given string."""
+  description_contains: String
+
+  """All values not containing the given string."""
+  description_not_contains: String
+
+  """All values starting with the given string."""
+  description_starts_with: String
+
+  """All values not starting with the given string."""
+  description_not_starts_with: String
+
+  """All values ending with the given string."""
+  description_ends_with: String
+
+  """All values not ending with the given string."""
+  description_not_ends_with: String
+  author: UserWhereInput
+}
+
+input PaletteWhereUniqueInput {
+  id: ID
+}
+
 type Query {
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
+  palettes(where: PaletteWhereInput, orderBy: PaletteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Palette]!
   user(where: UserWhereUniqueInput!): User
+  palette(where: PaletteWhereUniqueInput!): Palette
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
+  palettesConnection(where: PaletteWhereInput, orderBy: PaletteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PaletteConnection!
 
   """Fetches an object given its ID"""
   node(
@@ -68,6 +362,7 @@ type Query {
 
 type Subscription {
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
+  palette(where: PaletteSubscriptionWhereInput): PaletteSubscriptionPayload
 }
 
 type User implements Node {
@@ -75,6 +370,7 @@ type User implements Node {
   name: String!
   email: String!
   password: String!
+  palettes(where: PaletteWhereInput, orderBy: PaletteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Palette!]
   updatedAt: DateTime!
   createdAt: DateTime!
 }
@@ -90,6 +386,18 @@ type UserConnection {
 }
 
 input UserCreateInput {
+  name: String!
+  email: String!
+  password: String!
+  palettes: PaletteCreateManyWithoutAuthorInput
+}
+
+input UserCreateOneWithoutPalettesInput {
+  create: UserCreateWithoutPalettesInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateWithoutPalettesInput {
   name: String!
   email: String!
   password: String!
@@ -171,6 +479,26 @@ input UserUpdateInput {
   name: String
   email: String
   password: String
+  palettes: PaletteUpdateManyWithoutAuthorInput
+}
+
+input UserUpdateOneWithoutPalettesInput {
+  create: UserCreateWithoutPalettesInput
+  connect: UserWhereUniqueInput
+  delete: Boolean
+  update: UserUpdateWithoutPalettesDataInput
+  upsert: UserUpsertWithoutPalettesInput
+}
+
+input UserUpdateWithoutPalettesDataInput {
+  name: String
+  email: String
+  password: String
+}
+
+input UserUpsertWithoutPalettesInput {
+  update: UserUpdateWithoutPalettesDataInput!
+  create: UserCreateWithoutPalettesInput!
 }
 
 input UserWhereInput {
@@ -386,6 +714,9 @@ input UserWhereInput {
 
   """All values greater than or equal the given value."""
   createdAt_gte: DateTime
+  palettes_every: PaletteWhereInput
+  palettes_some: PaletteWhereInput
+  palettes_none: PaletteWhereInput
 }
 
 input UserWhereUniqueInput {
