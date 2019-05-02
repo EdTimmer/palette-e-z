@@ -8,6 +8,8 @@ const Mutation = {
 
   async createUser(parent, args, { prisma }, info) {
 
+    console.log('args.data in createUser is: ', args.data)
+
     const password = await hashPassword(args.data.password);
 
     const user = await prisma.mutation.createUser({
@@ -88,6 +90,56 @@ const Mutation = {
           }
         }
       }
+    }, info);
+  },
+
+  async deletePalette(parent, args, { prisma, request }, info) {
+    const userId = getUserId(request);
+
+    const paletteExists = await prisma.exists.Palette({
+      id: args.id,
+      author: {
+        id: userId
+      }
+    });
+
+    if (!paletteExists) {
+      throw new Error('Unable to delete palette');
+    }
+
+    return prisma.mutation.deletePalette({
+      where: {
+        id: args.id
+      }
+    }, info);
+  },
+
+  async updatePalette(parent, args, { prisma, request }, info) {
+
+    const userId = getUserId(request);
+
+    const paletteExists = await prisma.exists.Palette({
+      id: args.id,
+      author: {
+        id: userId
+      }
+    });
+
+    // const isPublished = await prisma.exists.Post({ id: args.id, published: true})
+
+    if (!paletteExists) {
+      throw new Error('Unable to update palette');
+    }
+
+    // if (isPublished && args.data.published === false) {
+    //   await prisma.mutation.deleteManyComments({ where: { post: { id: args.id } } })
+    // }
+
+    return prisma.mutation.updatePalette({
+      where: {
+        id: args.id
+      },
+      data: args.data
     }, info);
   },
 

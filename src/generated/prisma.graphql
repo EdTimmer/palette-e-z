@@ -1,5 +1,5 @@
 # source: http://localhost:4466/palette/dev
-# timestamp: Wed May 01 2019 09:50:06 GMT-0400 (Eastern Daylight Time)
+# timestamp: Wed May 01 2019 22:00:21 GMT-0400 (Eastern Daylight Time)
 
 type AggregatePalette {
   count: Int!

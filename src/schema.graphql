@@ -12,6 +12,8 @@ type Mutation {
   deleteUser: User!
   updateUser(data: UpdateUserInput!): User!  
   createPalette(data: CreatePaletteInput!): Palette!
+  deletePalette(id: ID!): Palette!
+  updatePalette(id: ID!, data: UpdatePaletteInput!): Palette!
 }
 
 # type Subscription {
@@ -44,6 +46,11 @@ input CreatePaletteInput {
   name: String!
   description: String!
   colors: [String!]!
+}
+
+input UpdatePaletteInput {
+  name: String
+  description: String
 }
 
 type User {
