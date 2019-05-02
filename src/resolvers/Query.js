@@ -28,7 +28,7 @@ const Query = {
       where: {
         id: userId
       }
-    })
+    }, info)
   },
   
   palettes(parent, args, { prisma, request }, info) {
