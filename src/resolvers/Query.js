@@ -57,6 +57,28 @@ const Query = {
     
     return prisma.query.palettes(opArgs, info);
   },
+
+  async onePalette(parent, args, { prisma, request }, info) {
+
+    const userId = getUserId(request, false)
+    
+    const palettes = await prisma.query.palettes({  //have to use posts to access where
+      where: {
+        id: args.id,  //limits to one post
+        OR: [{
+          author: {
+            id: userId
+          }
+        }]
+      }
+    }, info);
+
+    if (palettes.length === 0) {
+      throw new Error('Palette not found');
+    }
+
+    return palettes[0];
+   },
 }
 
 export { Query as default };

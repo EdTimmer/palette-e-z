@@ -4,6 +4,7 @@ type Query {
   users(query: String, first: Int, skip: Int, after: String, orderBy: UserOrderByInput): [User!]!
   me: User!  
   palettes: [Palette!]!
+  onePalette(id: ID!): Palette!
 }
 
 type Mutation {
